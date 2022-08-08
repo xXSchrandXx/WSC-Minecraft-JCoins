@@ -1,0 +1,12 @@
+name: ${project.artifactId}-bukkit
+main: ${project.groupId}.${project.artifactId}.bukkit.MinecraftJCoinsBukkit
+version: ${project.version}
+author: xXSchrandXx
+description: WSC-Minecraft-JCoins
+api-version: 1.13
+load: POSTWORLD
+softdepend: []
+
+commands:
+  wscjcoins:
+    description: Command for WSC-Minecraft-JCoins.

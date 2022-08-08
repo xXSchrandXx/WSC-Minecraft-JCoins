@@ -1,0 +1,10 @@
+name: ${project.artifactId}-bungee
+main: ${project.groupId}.${project.artifactId}.bungee.MinecraftJCoinsBungee
+version: ${project.version}
+author: xXSchrandXx
+description: WSC-Minecraft-JCoins
+softdepend: []
+
+commands:
+  wscjcoins:
+    description: Command for WSC-Minecraft-JCoins.
