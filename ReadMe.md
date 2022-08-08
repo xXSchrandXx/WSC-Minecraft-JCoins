@@ -1,4 +1,4 @@
-Quicklinks: [General](#general) | [API](#api) | [Links](#links) | [License](https://github.com/xXSchrandXx/WSC-Minecraft-Authenticator/blob/main/LICENSE)
+Quicklinks: [General](#general) | [API](#api) | [Links](#links) | [License](https://github.com/xXSchrandXx/WSC-Minecraft-JCoins/blob/main/LICENSE)
 
 "Minecraft"™ is a trademark of Mojang Synergies AB. This Resource ist not affiliate with Mojang.
 
