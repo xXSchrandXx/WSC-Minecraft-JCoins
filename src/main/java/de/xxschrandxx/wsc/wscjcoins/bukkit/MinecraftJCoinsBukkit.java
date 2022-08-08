@@ -29,6 +29,9 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoin
     private BukkitTask task = null;
     private PlayerListener listener = new PlayerListener();
     public boolean start() {
+        if (!getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.Enabled)) {
+            return true;
+        }
         if (task != null) {
             if (getServer().getScheduler().isCurrentlyRunning(task.getTaskId())) {
                 return false;
@@ -50,6 +53,9 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoin
         return true;
     }
     public boolean stop() {
+        if (!getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.Enabled)) {
+            return true;
+        }
         if (task == null) {
             return false;
         }
