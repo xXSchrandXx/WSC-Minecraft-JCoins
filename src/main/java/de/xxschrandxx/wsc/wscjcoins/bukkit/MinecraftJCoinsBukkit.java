@@ -44,7 +44,7 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoin
             getInstance(),
             getAPI().getRunnable(getConfiguration().getInt(MinecraftJCoinsVars.Configuration.Amount)),
             0,
-            getConfiguration().getLong(MinecraftJCoinsVars.Configuration.Interval)
+            getConfiguration().getLong(MinecraftJCoinsVars.Configuration.Interval) * 20
         );
         for (Player player : getServer().getOnlinePlayers()) {
             getAPI().addPlayer(player);

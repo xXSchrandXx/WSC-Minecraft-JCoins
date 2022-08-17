@@ -103,7 +103,7 @@ public class MinecraftJCoinsVars {
             // enabled
             public static final Boolean Enabled = false;
             // interval
-            public static final Long Interval = Long.valueOf(5);
+            public static final Long Interval = Long.valueOf(300);
             // amount
             public static final Integer Amount = 5;
             // locale
