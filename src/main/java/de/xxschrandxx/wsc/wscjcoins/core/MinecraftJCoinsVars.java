@@ -13,7 +13,7 @@ public class MinecraftJCoinsVars extends AbstractConfiguration {
     public static class Configuration {
         // universal
         // url
-        public static final String url ="url.sendCode";
+        public static final String url ="url";
         // timedJCoins.enabled
         public static final String timedJCoinsEnabled = "timedJCoins.enabled";
         // timedJCoins.interval
