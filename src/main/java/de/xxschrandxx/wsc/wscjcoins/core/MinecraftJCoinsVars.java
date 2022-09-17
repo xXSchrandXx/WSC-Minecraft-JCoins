@@ -1,150 +1,98 @@
 package de.xxschrandxx.wsc.wscjcoins.core;
 
-import java.lang.reflect.Field;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MinecraftJCoinsVars {
+import de.xxschrandxx.wsc.wscbridge.core.api.configuration.AbstractConfiguration;
+import de.xxschrandxx.wsc.wscbridge.core.api.configuration.IConfiguration;
+
+public class MinecraftJCoinsVars extends AbstractConfiguration {
     public static boolean startConfig(IConfiguration<?> configuration, Logger logger) {
-        boolean error = false;
-        for (Field constant : Configuration.class.getDeclaredFields()) {
-            try {
-                if (error) {
-                    checkConfiguration(
-                        configuration,
-                        (String) constant.get(Configuration.class),
-                        Configuration.defaults.class.getDeclaredField(constant.getName()).get(Configuration.defaults.class),
-                        logger
-                        );
-                }
-                else {
-                    error = checkConfiguration(
-                        configuration,
-                        (String) constant.get(Configuration.class),
-                        Configuration.defaults.class.getDeclaredField(constant.getName()).get(Configuration.defaults.class),
-                        logger
-                        );
-                }
-            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            }
-        }
-        return error;
+        return startConfig(configuration, Configuration.class, defaults.class, logger);
     }
 
-    public static boolean checkConfiguration(IConfiguration<?> configuration, String path, Object def, Logger logger) {
-        if (configuration.get(path) == null) {
-            logger.log(Level.WARNING, path + " is not set. Resetting it.");
-            configuration.set(path, def);
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
     public static class Configuration {
         // universal
         // url
-        public static final String URL = "url";
-        // key
-        public static final String Key = "key";
-        // enabled
-        public static final String Enabled = "enabled";
-        // interval
-        public static final String Interval = "interval";
-        // amount
-        public static final String Amount = "amount";
-        // locale
-        // CommandUsage
-        public static final String CommandUsage = "locale.usage";
-        // CommandReloadConfigSuccess
-        public static final String CommandReloadConfigSuccess = "locale.reload.config.success";
-        // CommandReloadConfigFailure
-        public static final String CommandReloadConfigFailure = "locale.reload.config.failure";
-        // CommandReloadTaskStopSuccess
-        public static final String CommandReloadTaskStopSuccess = "locale.reload.task.stop.success";
-        // CommandReloadTaskStopFailure
-        public static final String CommandReloadTaskStopFailure = "locale.reload.task.stop.failure";
-        // CommandReloadTaskStartSuccess
-        public static final String CommandReloadTaskStartSuccess = "locale.reload.task.start.success";
-        // CommandReloadTaskStartFailure
-        public static final String CommandReloadTaskStartFailure = "locale.reload.task.start.failure";
-        // CommandAddUsage
-        public static final String CommandAddUsage = "locale.add.usage";
-        // CommandAddInvalidUUID
-        public static final String CommandAddInvalidUUID = "locale.add.invaliduuid";
-        // CommandAddInvalidAmount
-        public static final String CommandAddInvalidAmount = "locale.add.invalidamount";
-        // CommandAddResponseError
-        public static final String CommandAddResponseError = "locale.add.responseerror";
-        // CommandAddInvalid
-        public static final String CommandAddInvalid = "locale.add.invalid";
-        // CommandAddValid
-        public static final String CommandAddValid = "locale.add.valid";
-        // CommandRemoveUsage
-        public static final String CommandRemoveUsage = "locale.remove.usage";
-        // CommandRemoveInvalidUUID
-        public static final String CommandRemoveInvalidUUID = "locale.remove.invaliduuid";
-        // CommandRemoveInvalidAmount
-        public static final String CommandRemoveInvalidAmount = "locale.remove.invalidamount";
-        // CommandRemoveResponseError
-        public static final String CommandRemoveResponseError = "locale.remove.responseerror";
-        // CommandRemoveInvalid
-        public static final String CommandRemoveInvalid = "locale.remove.invalid";
-        // CommandRemoveValid
-        public static final String CommandRemoveValid = "locale.remove.valid";
+        public static final String url ="url.sendCode";
+        // timedJCoins.enabled
+        public static final String timedJCoinsEnabled = "timedJCoins.enabled";
+        // timedJCoins.interval
+        public static final String timedJCoinsInterval = "timedJCoins.interval";
+        // timedJCoins.amount
+        public static final String timedJCoinsAmount = "timedJCoins.amount";
 
-        // Default values
-        public static final class defaults {
-            // universal
-            // url
-            public static final String URL = "https://example.com/index.php?minecraft-jcoins/";
-            // key
-            public static final String Key = "MySuperSecretKey";
-            // enabled
-            public static final Boolean Enabled = false;
-            // interval
-            public static final Long Interval = Long.valueOf(300);
-            // amount
-            public static final Integer Amount = 5;
-            // locale
-            // CommandUsage
-            public static final String CommandUsage = "&7Usage: &e/wscjcoins <reload/add/remove> [target] [amount]";
-            // CommandReloadConfigSuccess
-            public static final String CommandReloadConfigSuccess = "&aSuccessfully reloaded &7config.yml&a.";
-            // CommandReloadConfigFailure
-            public static final String CommandReloadConfigFailure = "&cFailed to reload &7config.yml&c.";
-            // CommandReloadTaskStopSuccess
-            public static final String CommandReloadTaskStopSuccess = "&aSuccessfully stopped task.";
-            // CommandReloadTaskStopFailure
-            public static final String CommandReloadTaskStopFailure = "&cFailed to stop task.";
-            // CommandReloadTaskStartSuccess
-            public static final String CommandReloadTaskStartSuccess = "&aSuccessfully started task.";
-            // CommandReloadTaskStartFailure
-            public static final String CommandReloadTaskStartFailure = "&cFailed to start task.";
-        // CommandAddUsage
-        public static final String CommandAddUsage = "&7Usage: &e/wscjcoins add [target] [amount]";
-        // CommandAddInvalidUUID
-        public static final String CommandAddInvalidUUID = "&cInvalid UUID format given.";
-        // CommandAddInvalidAmount
-        public static final String CommandAddInvalidAmount = "&cInvalid amount given.";
-        // CommandAddResponseError
-        public static final String CommandAddResponseError = "&cInternal error. Check console for more information.";
-        // CommandAddInvalid
-        public static final String CommandAddInvalid = "&cInvalid request send. Check if the user is linked.";
-        // CommandAddValid
-        public static final String CommandAddValid = "&aSuccessfully added &e%amount%&a to &e%target%&a`s wallet.";
-        // CommandRemoveUsage
-        public static final String CommandRemoveUsage = "&7Usage: &e/wscjcoins remove [target] [amount]";
-        // CommandRemoveInvalidUUID
-        public static final String CommandRemoveInvalidUUID = "&cInvalid UUID format given.";
-        // CommandRemoveInvalidAmount
-        public static final String CommandRemoveInvalidAmount = "&cInvalid amount given.";
-        // CommandRemoveResponseError
-        public static final String CommandRemoveResponseError = "&cInternal error. Check console for more information.";
-        // CommandRemoveInvalid
-        public static final String CommandRemoveInvalid = "&cInvalid request send. Check if the user is linked.";
-        // CommandRemoveValid
-        public static final String CommandRemoveValid = "&aSuccessfully added &e%amount%&a to &e%target%&a`s wallet.";
-        }
+        // permission
+        // permission.command.wscjcoins
+        public static final String PermCmdWSCJCoins = "permission.command.wscjcoins";
+
+        // language
+        // language.timedJCoins
+        public static final String LangTimedJCoins = "language.timedJCoins";
+        // language.command.noperm
+        public static final String LangCmdNoPerm = "language.command.noperm";
+        // language.command.reload.config.start
+        public static final String LangCmdReloadConfigStart = "language.command.reload.config.start";
+        // language.command.reload.config.error
+        public static final String LangCmdReloadConfigError = "language.command.reload.config.error";
+        // language.command.reload.config.success
+        public static final String LangCmdReloadConfigSuccess = "language.command.reload.config.success";
+        // language.command.reload.api.start
+        public static final String LangCmdReloadAPIStart = "language.command.reload.api.start";
+        // language.command.reload.api.success
+        public static final String LangCmdReloadAPISuccess = "language.command.reload.api.success";
+        // language.command.usage
+        public static final String LangCmdUsage = "language.command.usage";
+        // language.command.noplayer
+        public static final String LangCmdNoPlayer = "language.command.noplayer";
+        // language.command.noint
+        public static final String LangCmdNoInt = "language.command.noint";
+        // language.command.success
+        public static final String LangCmdSuccess = "language.command.success";
+        // language.command.error
+        public static final String LangCmdError = "language.command.error";
+    }
+    // Default values
+    public static final class defaults {
+        // universal
+        // url
+        public static final String url = "https://example.domain/index.php?minecraft-jcoins-code//";
+        // timedJCoins.enabled
+        public static final Boolean timedJCoinsEnabled = true;
+        // timedJCoins.interval
+        public static final Integer timedJCoinsInterval = 5;
+        // timedJCoins.amount
+        public static final Integer timedJCoinsAmount = 5;
+
+        // permission
+        // permission.command.wscjcoins
+        public static final String PermCmdWSCJCoins = "wscjcoins.command.wscjcoins";
+
+        // language
+        // language.timedJCoins
+        public static final String LangTimedJCoins = "&8[&6WSC-JCoins&8]&7 You got &a%amount%&7 JCoins because you were on the server for %minutes% minutes.";
+        // language.command.noperm
+        public static final String LangCmdNoPerm = "&8[&6WSC-JCoins&8]&c You don't have permission to do this.";
+        // language.command.playeronly
+        public static final String LangCmdPlayerOnly = "&8[&6WSC-JCoins&8]&c You need to be a player.";
+        // language.command.reload.config.start
+        public static final String LangCmdReloadConfigStart = "&8[&6WSC-JCoins&8]&7 Reloading configuration.";
+        // language.command.reload.config.error
+        public static final String LangCmdReloadConfigError = "&8[&6WSC-JCoins&8]&e Reloading configuration failed.";
+        // language.command.reload.config.success
+        public static final String LangCmdReloadConfigSuccess = "&8[&6WSC-JCoins&8]&7 Configuration reloaded successfully.";
+        // language.command.reload.api.start
+        public static final String LangCmdReloadAPIStart = "&8[&6WSC-JCoins&8]&7 Reloading API.";
+        // language.command.reload.api.success
+        public static final String LangCmdReloadAPISuccess = "&8[&6WSC-JCoins&8]&7 API reloaded successfully.";
+        // language.command.usage
+        public static final String LangCmdUsage = "&8[&6WSC-JCoins&8]&7 /wscjcoins <Player> <Amount>";
+        // language.command.noplayer
+        public static final String LangCmdNoPlayer = "&8[&6WSC-JCoins&8]&c Cannot find player.";
+        // language.command.noint
+        public static final String LangCmdNoInt = "&8[&6WSC-JCoins&8]&c Amount is no integer.";
+        // language.command.success
+        public static final String LangCmdSuccess = "&8[&6WSC-JCoins&8]&7 JCoins successfilly modified.";
+        // language.command.error
+        public static final String LangCmdError = "&8[&6WSC-JCoins&8]&7 Could not modify JCoins: %error%";
     }
 }

@@ -1,74 +1,50 @@
 package de.xxschrandxx.wsc.wscjcoins.bukkit;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
-import de.xxschrandxx.wsc.wscjcoins.bukkit.api.ConfigurationBukkit;
+import de.xxschrandxx.wsc.wscbridge.bukkit.MinecraftBridgeBukkit;
+import de.xxschrandxx.wsc.wscbridge.bukkit.api.ConfigurationBukkit;
+import de.xxschrandxx.wsc.wscbridge.bukkit.api.command.SenderBukkit;
+import de.xxschrandxx.wsc.wscbridge.core.IMinecraftBridgePlugin;
+import de.xxschrandxx.wsc.wscbridge.core.api.command.ISender;
 import de.xxschrandxx.wsc.wscjcoins.bukkit.api.MinecraftJCoinsBukkitAPI;
-import de.xxschrandxx.wsc.wscjcoins.bukkit.commands.*;
-import de.xxschrandxx.wsc.wscjcoins.bukkit.listeners.*;
-import de.xxschrandxx.wsc.wscjcoins.core.IMinecraftJCoins;
+import de.xxschrandxx.wsc.wscjcoins.bukkit.commands.WSCJCoinsBukkit;
+import de.xxschrandxx.wsc.wscjcoins.bukkit.listener.*;
 import de.xxschrandxx.wsc.wscjcoins.core.MinecraftJCoinsVars;
 
-public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoins {
+public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftBridgePlugin<MinecraftJCoinsBukkitAPI> {
 
     // start of api part
     private static MinecraftJCoinsBukkit instance;
+
     public static MinecraftJCoinsBukkit getInstance() {
         return instance;
     }
+
     private MinecraftJCoinsBukkitAPI api;
+
+    public void loadAPI(ISender<?> sender) {
+        String urlString = getConfiguration().getString(MinecraftJCoinsVars.Configuration.url);
+        URL url;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException e) {
+            getLogger().log(Level.INFO, "Could not load api, disabeling plugin!.", e);
+            return;
+        }
+        MinecraftBridgeBukkit wsc = MinecraftBridgeBukkit.getInstance();
+        this.api = new MinecraftJCoinsBukkitAPI(
+            url,
+            getLogger(),
+            wsc.getAPI()
+        );
+    }
     public MinecraftJCoinsBukkitAPI getAPI() {
         return this.api;
-    }
-    private BukkitTask task = null;
-    private PlayerListener listener = new PlayerListener();
-    public boolean start() {
-        if (!getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.Enabled)) {
-            return true;
-        }
-        if (task != null) {
-            if (getServer().getScheduler().isCurrentlyRunning(task.getTaskId())) {
-                return false;
-            }
-            if (getServer().getScheduler().isQueued(task.getTaskId())) {
-                return false;
-            }
-        }
-        task = getServer().getScheduler().runTaskTimerAsynchronously(
-            getInstance(),
-            getAPI().getRunnable(getConfiguration().getInt(MinecraftJCoinsVars.Configuration.Amount)),
-            0,
-            getConfiguration().getLong(MinecraftJCoinsVars.Configuration.Interval) * 20
-        );
-        for (Player player : getServer().getOnlinePlayers()) {
-            getAPI().addPlayer(player);
-        }
-        getServer().getPluginManager().registerEvents(listener, getInstance());
-        return true;
-    }
-    public boolean stop() {
-        if (!getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.Enabled)) {
-            return true;
-        }
-        if (task == null) {
-            return false;
-        }
-        if (!getServer().getScheduler().isCurrentlyRunning(task.getTaskId())) {
-            return false;
-        }
-        if (!getServer().getScheduler().isQueued(task.getTaskId())) {
-            return false;
-        }
-        getServer().getScheduler().cancelTask(task.getTaskId());
-        HandlerList.unregisterAll(listener);
-        getAPI().clear();
-        return true;
     }
     // end of api part
 
@@ -77,36 +53,34 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoin
     public void onEnable() {
         instance = this;
 
-        if (!reloadConfiguration()) {
+        // Load configuration
+        getLogger().log(Level.INFO, "Loading Configuration.");
+        SenderBukkit sender = new SenderBukkit(getServer().getConsoleSender(), getInstance());
+        if (!reloadConfiguration(sender)) {
             getLogger().log(Level.WARNING, "Could not load config.yml, disabeling plugin!");
             onDisable();
             return;
         }
 
-        // set api
-        try {
-            this.api = new MinecraftJCoinsBukkitAPI(
-                getConfiguration().getString(MinecraftJCoinsVars.Configuration.URL),
-                getConfiguration().getString(MinecraftJCoinsVars.Configuration.Key),
-                getLogger()
-                );
+        // Load api
+        getLogger().log(Level.INFO, "Loading API.");
+        loadAPI(sender);
+
+        // Load listener
+        getLogger().log(Level.INFO, "Loading Listener.");
+        getServer().getPluginManager().registerEvents(new WSCBridgeConfigReloadListenerBukkit(), getInstance());
+        getServer().getPluginManager().registerEvents(new WSCBridgePluginReloadListenerBukkit(), getInstance());
+        if (getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.timedJCoinsEnabled)) {
+            getServer().getPluginManager().registerEvents(new WSCJCoinsTimedBukkitListener(), getInstance());
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-            return;
-        }
 
-        // register command
-        getCommand("wscjcoins").setExecutor(new WSCJCoins());
-
-        // register listener
-
-        // register runnable
-        start();
+        // Load commands
+        getLogger().log(Level.INFO, "Loading Commands.");
+        getCommand("wscjcoins").setExecutor(new WSCJCoinsBukkit());
     }
+
     @Override
     public void onDisable() {
-        stop();
     }
     // end of plugin part
 
@@ -115,14 +89,14 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftJCoin
         return new ConfigurationBukkit(getInstance().getConfig());
     }
 
-    public boolean reloadConfiguration() {
+    public boolean reloadConfiguration(ISender<?> sender) {
         reloadConfig();
 
         if (MinecraftJCoinsVars.startConfig(getConfiguration(), getLogger())) {
             if (!saveConfiguration()) {
                 return false;
             }
-            return reloadConfiguration();
+            return reloadConfiguration(sender);
         }
         return true;
     }

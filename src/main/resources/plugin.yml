@@ -5,8 +5,10 @@ author: xXSchrandXx
 description: WSC-Minecraft-JCoins
 api-version: 1.13
 load: POSTWORLD
-softdepend: []
+depend: [wscbridge-bukkit]
 
 commands:
   wscjcoins:
     description: Command for WSC-Minecraft-JCoins.
+    aliases:
+    - wscjcoinsbukkit

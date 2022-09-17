@@ -3,32 +3,67 @@ package de.xxschrandxx.wsc.wscjcoins.bukkit.api;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
+import java.net.URL;
+import java.net.UnknownServiceException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
-import de.xxschrandxx.wsc.wscjcoins.core.MinecraftJCoinsCoreAPI;
+import de.xxschrandxx.wsc.wscbridge.bukkit.api.MinecraftBridgeBukkitAPI;
+import de.xxschrandxx.wsc.wscbridge.core.api.MinecraftBridgeCoreAPI;
+import de.xxschrandxx.wsc.wscbridge.core.api.Response;
+import de.xxschrandxx.wsc.wscbridge.core.api.command.ISender;
+import de.xxschrandxx.wsc.wscjcoins.bukkit.MinecraftJCoinsBukkit;
+import de.xxschrandxx.wsc.wscjcoins.core.MinecraftJCoinsVars;
+import de.xxschrandxx.wsc.wscjcoins.core.api.IMinecraftJCoinsCoreAPI;
+import de.xxschrandxx.wsc.wscjcoins.core.api.MinecraftJCoinsCoreAPI;
+import de.xxschrandxx.wsc.wscjcoins.core.runnable.TimedJCoinsRunnable;
 
-public class MinecraftJCoinsBukkitAPI extends MinecraftJCoinsCoreAPI {
-    public MinecraftJCoinsBukkitAPI(String url, String key, Logger logger) throws MalformedURLException {
-        super(url, key, logger);
+public class MinecraftJCoinsBukkitAPI extends MinecraftBridgeBukkitAPI implements IMinecraftJCoinsCoreAPI {
+
+    protected final URL url;
+
+    public MinecraftJCoinsBukkitAPI(URL url, Logger logger, MinecraftBridgeCoreAPI api) {
+        super(api.getID(), api.getAuth(), logger, api.isDebugModeEnabled());
+        this.url = url;
     }
-    public boolean addJCoins(Player player, Integer amount) throws SocketTimeoutException, IOException {
-        return addJCoins(player.getUniqueId(), amount);
-     }
-     public boolean addJCoinsB(ArrayList<Player> players, Integer amount) throws SocketTimeoutException, IOException {
-        ArrayList<UUID> uuids = new ArrayList<UUID>();
-        for (Player player : players) {
-            uuids.add(player.getUniqueId());
+
+    public Response<String, Object> sendJCoins(UUID uuid, Integer amount) throws MalformedURLException, UnknownServiceException, SocketTimeoutException, IOException {
+        return MinecraftJCoinsCoreAPI.sendJCoins(this, url, uuid, amount);
+    }
+
+    protected HashMap<ISender<?>, BukkitTask> tasks = new HashMap<ISender<?>, BukkitTask>();
+    public void addTask(ISender<?> sender) {
+        if (tasks.containsKey(sender)) {
+            if (isDebugModeEnabled()) {
+                log("Sender already in tasks " + sender.getName());
+            }
+            return;
         }
-        return addJCoins(uuids, amount);
+        MinecraftJCoinsBukkit instance = MinecraftJCoinsBukkit.getInstance();
+        Integer interval = instance.getConfiguration().getInt(MinecraftJCoinsVars.Configuration.timedJCoinsInterval);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, new TimedJCoinsRunnable(instance, sender), interval, interval);
+        if (isDebugModeEnabled()) {
+            log("Adding task for " + sender.getName());
+        }
+        tasks.put(sender, task);
     }
-    public boolean addPlayer(Player player) {
-        return addUUID(player.getUniqueId());
+
+    public void removeTask(ISender<?> sender) {
+        if (!tasks.containsKey(sender)) {
+            if (isDebugModeEnabled()) {
+                log("Sender not in tasks " + sender.getName());
+            }
+            return;
+        }
+        Bukkit.getScheduler().cancelTask(tasks.get(sender).getTaskId());
+        if (isDebugModeEnabled()) {
+            log("Removing task for " + sender.getName());
+        }
+        tasks.remove(sender);
     }
-    public boolean removePlayer(Player player) {
-        return removeUUID(player.getUniqueId());
-    }
+    
 }

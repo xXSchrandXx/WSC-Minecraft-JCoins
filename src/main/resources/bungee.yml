@@ -3,8 +3,10 @@ main: ${project.groupId}.${project.artifactId}.bungee.MinecraftJCoinsBungee
 version: ${project.version}
 author: xXSchrandXx
 description: WSC-Minecraft-JCoins
-softdepend: []
+depends: [wscbridge-bungee]
 
 commands:
   wscjcoins:
     description: Command for WSC-Minecraft-JCoins.
+    aliases:
+    - wscjcoinsbungee
