@@ -73,6 +73,7 @@ public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftBridg
         if (getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.timedJCoinsEnabled)) {
             getServer().getPluginManager().registerEvents(new WSCJCoinsTimedBukkitListener(), getInstance());
         }
+        getServer().getPluginManager().registerEvents(new AddModuleListenerBukkit(), getInstance());
 
         // Load commands
         getLogger().log(Level.INFO, "Loading Commands.");

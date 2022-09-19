@@ -77,6 +77,7 @@ public class MinecraftJCoinsBungee extends Plugin implements IMinecraftBridgePlu
         if (getConfiguration().getBoolean(MinecraftJCoinsVars.Configuration.timedJCoinsEnabled)) {
             getProxy().getPluginManager().registerListener(getInstance(), new WSCJCoinsTimedBungeeListener());
         }
+        getProxy().getPluginManager().registerListener(getInstance(), new AddModuleListenerBungee());
 
         // load commands
         getLogger().log(Level.INFO, "Loading Commands.");
