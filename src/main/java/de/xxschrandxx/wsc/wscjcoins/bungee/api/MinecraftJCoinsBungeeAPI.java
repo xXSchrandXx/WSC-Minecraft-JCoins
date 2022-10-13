@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import de.xxschrandxx.wsc.wscbridge.bungee.api.MinecraftBridgeBungeeAPI;
-import de.xxschrandxx.wsc.wscbridge.core.api.MinecraftBridgeCoreAPI;
 import de.xxschrandxx.wsc.wscbridge.core.api.Response;
 import de.xxschrandxx.wsc.wscbridge.core.api.command.ISender;
 import de.xxschrandxx.wsc.wscjcoins.bungee.MinecraftJCoinsBungee;
@@ -26,8 +25,8 @@ public class MinecraftJCoinsBungeeAPI extends MinecraftBridgeBungeeAPI implement
 
     protected final URL url;
 
-    public MinecraftJCoinsBungeeAPI(URL url, Logger logger, MinecraftBridgeCoreAPI api) {
-        super(api.getID(), api.getAuth(), logger, api.isDebugModeEnabled());
+    public MinecraftJCoinsBungeeAPI(URL url, Logger logger, MinecraftBridgeBungeeAPI api) {
+        super(api, logger);
         this.url = url;
     }
 

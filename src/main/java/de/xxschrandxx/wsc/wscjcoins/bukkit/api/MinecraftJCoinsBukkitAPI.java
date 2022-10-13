@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.xxschrandxx.wsc.wscbridge.bukkit.api.MinecraftBridgeBukkitAPI;
-import de.xxschrandxx.wsc.wscbridge.core.api.MinecraftBridgeCoreAPI;
 import de.xxschrandxx.wsc.wscbridge.core.api.Response;
 import de.xxschrandxx.wsc.wscbridge.core.api.command.ISender;
 import de.xxschrandxx.wsc.wscjcoins.bukkit.MinecraftJCoinsBukkit;
@@ -26,8 +25,8 @@ public class MinecraftJCoinsBukkitAPI extends MinecraftBridgeBukkitAPI implement
 
     protected final URL url;
 
-    public MinecraftJCoinsBukkitAPI(URL url, Logger logger, MinecraftBridgeCoreAPI api) {
-        super(api.getID(), api.getAuth(), logger, api.isDebugModeEnabled());
+    public MinecraftJCoinsBukkitAPI(URL url, Logger logger, MinecraftBridgeBukkitAPI api) {
+        super(api, logger);
         this.url = url;
     }
 
