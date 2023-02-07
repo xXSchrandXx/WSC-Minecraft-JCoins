@@ -22,6 +22,10 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class MinecraftJCoinsBungee extends Plugin implements IMinecraftBridgePlugin<MinecraftJCoinsBungeeAPI> {
 
     // start of api part
+    public String getInfo() {
+        return null;
+    }
+
     private static MinecraftJCoinsBungee instance;
 
     public static MinecraftJCoinsBungee getInstance() {

@@ -19,6 +19,10 @@ import de.xxschrandxx.wsc.wscjcoins.core.MinecraftJCoinsVars;
 public class MinecraftJCoinsBukkit extends JavaPlugin implements IMinecraftBridgePlugin<MinecraftJCoinsBukkitAPI> {
 
     // start of api part
+    public String getInfo() {
+        return null;
+    }
+
     private static MinecraftJCoinsBukkit instance;
 
     public static MinecraftJCoinsBukkit getInstance() {
