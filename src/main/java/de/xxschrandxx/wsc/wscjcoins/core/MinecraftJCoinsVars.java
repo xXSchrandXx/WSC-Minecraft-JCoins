@@ -55,7 +55,7 @@ public class MinecraftJCoinsVars extends AbstractConfiguration {
     public static final class defaults {
         // universal
         // url
-        public static final String url = "https://example.domain/index.php?minecraft-jcoins-code//";
+        public static final String url = "https://example.domain/index.php?minecraft-jcoins-code/";
         // timedJCoins.enabled
         public static final Boolean timedJCoinsEnabled = true;
         // timedJCoins.interval
